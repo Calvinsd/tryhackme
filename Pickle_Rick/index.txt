@@ -1,0 +1,26 @@
+INITIAL SCAN 
+
+nmap -sC -sV -Pn -T4 -oN initalscan 10.10.147.136
+
+
+gobuster dir -u http://10.10.147.136 -w /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt -o gobusterscan -t 80
+===============================================================
+Gobuster v3.0.1
+by OJ Reeves (@TheColonial) & Christian Mehlmauer (@_FireFart_)
+===============================================================
+[+] Url:            http://10.10.147.136
+[+] Threads:        80
+[+] Wordlist:       /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt
+[+] Status codes:   200,204,301,302,307,401,403
+[+] User Agent:     gobuster/3.0.1
+[+] Timeout:        10s
+===============================================================
+2021/05/05 16:34:50 Starting gobuster
+===============================================================
+/assets (Status: 301)
+/server-status (Status: 403)
+===============================================================
+2021/05/05 16:42:49 Finished
+===============================================================
+
+

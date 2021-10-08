@@ -1,0 +1,27 @@
+Nmap SCAN :
+
+nmap  -sV -Pn -T5  10.10.15.72
+
+
+Host discovery disabled (-Pn). All addresses will be marked 'up' and scan times will be slower.
+Starting Nmap 7.91 ( https://nmap.org ) at 2021-06-16 17:46 IST
+Stats: 0:00:02 elapsed; 0 hosts completed (1 up), 1 undergoing Connect Scan
+Connect Scan Timing: About 4.70% done; ETC: 17:47 (0:01:01 remaining)
+Nmap scan report for 10.10.15.72
+Host is up (0.18s latency).
+Not shown: 997 filtered ports
+PORT     STATE SERVICE VERSION
+21/tcp   open  ftp     vsftpd 3.0.3
+80/tcp   open  http    Apache httpd 2.4.18 ((Ubuntu))
+2222/tcp open  ssh     OpenSSH 7.2p2 Ubuntu 4ubuntu2.8 (Ubuntu Linux; protocol 2.0)
+Service Info: OSs: Unix, Linux; CPE: cpe:/o:linux:linux_kernel
+
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+Nmap done: 1 IP address (1 host up) scanned in 18.86 seconds
+
+
+
+gobuster result : simple/ 
+
+cmssimplemade vulnerable to sqli
+
